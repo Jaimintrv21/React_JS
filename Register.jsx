@@ -1,24 +1,83 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { registerUser } from "./redux/authSlice";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './styles.css';
 
 const Register = () => {
-  const [userData, setUserData] = useState({ name: "", email: "", password: "" });
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser(userData));
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    // Here you would typically make an API call to register
+    // For demo purposes, we'll just navigate to login
+    localStorage.setItem('registeredUser', JSON.stringify(formData));
+    navigate('/login');
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
-        <input type="email" placeholder="Email" onChange={(e) => setUserData({ ...userData, email: e.target.value })} />
-        <input type="password" placeholder="Password" onChange={(e) => setUserData({ ...userData, password: e.target.value })} />
+        <div className="form-group">
+          <label>Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <button type="submit">Register</button>
+        <p>
+          Already have an account? <Link to="/login">Login here</Link>
+        </p>
       </form>
     </div>
   );

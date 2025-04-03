@@ -1,23 +1,61 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginUser } from "./redux/authSlice";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './styles.css';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(credentials));
+    // Here you would typically validate and make an API call
+    // For demo purposes, we'll just navigate to the table
+    if (formData.email && formData.password) {
+      localStorage.setItem('isAuthenticated', 'true');
+      navigate('/table');
+    } else {
+      alert('Please fill in all fields');
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" onChange={(e) => setCredentials({ ...credentials, email: e.target.value })} />
-        <input type="password" placeholder="Password" onChange={(e) => setCredentials({ ...credentials, password: e.target.value })} />
+        <div className="form-group">
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <button type="submit">Login</button>
+        <p>
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
       </form>
     </div>
   );
